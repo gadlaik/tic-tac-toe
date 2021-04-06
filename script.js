@@ -1,16 +1,53 @@
-let Gameboard = {
-  gameboard: document.querySelector(".gameboard"),
-  fields: document.querySelectorAll(".field"),
-  wins: 0,
-  xo: "X",
-  gameover: false,
-};
-let Player = { wins: 0, score: document.querySelector(".player") };
-let AI = { wins: 0, score: document.querySelector(".opponent") };
-
 let Game = (function () {
+  let Gameboard = {
+    gameboard: document.querySelector(".gameboard"),
+    fields: document.querySelectorAll(".field"),
+    wins: 0,
+    xo: "X",
+    gameover: false,
+  };
+  let Player = { wins: 0, score: document.querySelector(".player") };
+  let AI = {
+    wins: 0,
+    score: document.querySelector(".opponent"),
+    uprising(field) {
+      if (field[4].textContent == "") field[4].textContent = "O";
+      else if (field[7].textContent == "X" && field[3].textContent == "")
+        field[3].textContent = "O";
+      else if (
+        field[2].textContent == "X" &&
+        field[3].textContent == "O" &&
+        field[1].textContent == ""
+      )
+        field[1].textContent = "O";
+      else if (
+        field[2].textContent == "X" &&
+        field[3].textContent == "O" &&
+        field[1].textContent == "O" &&
+        field[7].textContent == ""
+      )
+        field[7].textContent = "O";
+      else if (
+        field[2].textContent == "X" &&
+        field[3].textContent == "O" &&
+        field[1].textContent == "O" &&
+        field[8].textContent == ""
+      )
+        field[8].textContent = "O";
+      else if (field[0].textContent == "") field[0].textContent = "O";
+      else if (field[2].textContent == "") field[2].textContent = "O";
+      else if (field[1].textContent == "") field[1].textContent = "O";
+      else if (field[6].textContent == "") field[6].textContent = "O";
+      else if (field[8].textContent == "") field[8].textContent = "O";
+      else if (field[7].textContent == "") field[7].textContent = "O";
+      else if (field[5].textContent == "") field[5].textContent = "O";
+      else if (field[3].textContent == "") field[3].textContent = "O";
+    },
+  };
+
   let blur = document.querySelector(".content");
   let winner = document.querySelector(".winner");
+
   let cases = function (one, two, three, xo, ox) {
     if (
       Gameboard.fields[one].textContent == xo &&
@@ -70,18 +107,22 @@ let Game = (function () {
   };
 
   let gaming = function (e) {
+    let turn = document.querySelector(".turn");
+
     if (e.target.classList.contains("field") && e.target.textContent == "") {
       e.target.textContent = Gameboard.xo;
-      let turn = document.querySelector(".turn");
 
-      if (Gameboard.xo == "X") {
+      if (winCon("X", "O")) gameIsOver();
+      else if (Gameboard.xo == "X") {
         Gameboard.xo = "O";
         turn.textContent = "ENEMY TURN";
         turn.style.color = "orangered";
-      } else {
-        Gameboard.xo = "X";
-        turn.textContent = "PLAYER TURN";
-        turn.style.color = "limegreen";
+        if (turn.textContent == "ENEMY TURN") {
+          AI.uprising(Gameboard.fields);
+          Gameboard.xo = "X";
+          turn.textContent = "PLAYER TURN";
+          turn.style.color = "limegreen";
+        }
       }
     }
   };
@@ -89,7 +130,7 @@ let Game = (function () {
   let gameIsOver = function () {
     document.querySelector(".again").style.display = "block";
     blur.style.filter = "blur(5px)";
-    document.querySelector(".again").addEventListener("click", (e) => {
+    document.querySelector(".playAgain").addEventListener("click", (e) => {
       e.preventDefault();
       Gameboard.fields.forEach((field) => {
         field.textContent = "";
@@ -119,13 +160,16 @@ let Game = (function () {
               if (i == 9) {
                 Gameboard.gameover = true;
                 blur.style.filter = "blur(5px)";
+                winner.style.color = "gray";
+                winner.textContent = "DRAW";
+                gameIsOver();
               }
             });
           }
 
           Player.score.textContent = `Player: ${Player.wins}`;
           AI.score.textContent = `Enemy: ${AI.wins}`;
-        } else console.log("Game over!");
+        }
       });
     },
   };
