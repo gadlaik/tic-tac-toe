@@ -21,6 +21,18 @@ let Game = (function () {
       )
         field[1].textContent = "O";
       else if (
+        field[0].textContent == "X" &&
+        field[6].textContent == "X" &&
+        field[3].textContent == ""
+      )
+        field[3].textContent = "O";
+      else if (
+        field[8].textContent == "X" &&
+        field[2].textContent == "X" &&
+        field[5].textContent == ""
+      )
+        field[5].textContent = "O";
+      else if (
         field[2].textContent == "X" &&
         field[3].textContent == "O" &&
         field[1].textContent == "O" &&
@@ -126,7 +138,7 @@ let Game = (function () {
             Gameboard.gameover = true;
             blur.style.filter = "blur(5px)";
             winner.style.color = "gray";
-            winner.textContent = "DRAW";
+            winner.textContent = "TIE";
             gameIsOver();
           }
         });
