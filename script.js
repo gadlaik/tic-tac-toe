@@ -42,13 +42,17 @@ let Game = (function () {
       else if (field[7].textContent == "") field[7].textContent = "O";
       else if (field[5].textContent == "") field[5].textContent = "O";
       else if (field[3].textContent == "") field[3].textContent = "O";
+      if (winCon("X", "O")) {
+        gameIsOver();
+        Gameboard.gameover = true;
+      }
     },
   };
 
   let blur = document.querySelector(".content");
   let winner = document.querySelector(".winner");
 
-  let cases = function (one, two, three, xo, ox) {
+  let cases = (one, two, three, xo, ox) => {
     if (
       Gameboard.fields[one].textContent == xo &&
       Gameboard.fields[two].textContent == xo &&
@@ -69,7 +73,6 @@ let Game = (function () {
       AI.wins++;
       winner.textContent = "ENEMY WON :(";
       winner.style.color = "orangered";
-
       Gameboard.fields[one].style.color = "gold";
       Gameboard.fields[two].style.color = "gold";
       Gameboard.fields[three].style.color = "gold";
@@ -111,14 +114,29 @@ let Game = (function () {
 
     if (e.target.classList.contains("field") && e.target.textContent == "") {
       e.target.textContent = Gameboard.xo;
+      let i = 0;
 
-      if (winCon("X", "O")) gameIsOver();
-      else if (Gameboard.xo == "X") {
+      if (winCon("X", "O")) {
+        Gameboard.gameover = true;
+        gameIsOver();
+      } else {
+        Gameboard.fields.forEach((field) => {
+          if (field.textContent != "") i++;
+          if (i == 9) {
+            Gameboard.gameover = true;
+            blur.style.filter = "blur(5px)";
+            winner.style.color = "gray";
+            winner.textContent = "DRAW";
+            gameIsOver();
+          }
+        });
+      }
+      if (Gameboard.xo == "X") {
         Gameboard.xo = "O";
         turn.textContent = "ENEMY TURN";
         turn.style.color = "orangered";
         if (turn.textContent == "ENEMY TURN") {
-          AI.uprising(Gameboard.fields);
+          if (!Gameboard.gameover) AI.uprising(Gameboard.fields);
           Gameboard.xo = "X";
           turn.textContent = "PLAYER TURN";
           turn.style.color = "limegreen";
@@ -137,40 +155,25 @@ let Game = (function () {
         field.style.color = "black";
       });
       document.querySelector(".again").style.display = "none";
-      Gameboard.gameover = false;
       blur.style.filter = "none";
+      Gameboard.gameover = false;
     });
   };
 
   return {
     ticTacToe: function () {
-      Gameboard.gameboard.addEventListener("click", (e) => {
-        let i = 0;
-        let info = e;
-        if (Gameboard.gameover == true) info = null;
+      if (winCon("X", "O")) gameIsOver();
+      else if (Gameboard.gameover == false)
+        Gameboard.gameboard.addEventListener("click", (e) => {
+          let info = e;
+          if (Gameboard.gameover == true) info = null;
+          else if (Gameboard.gameover == false) {
+            gaming(info);
 
-        if (Gameboard.gameover == false) {
-          gaming(info);
-
-          // win or draw
-          if (winCon("X", "O")) Gameboard.gameover = true;
-          else {
-            Gameboard.fields.forEach((field) => {
-              if (field.textContent != "") i++;
-              if (i == 9) {
-                Gameboard.gameover = true;
-                blur.style.filter = "blur(5px)";
-                winner.style.color = "gray";
-                winner.textContent = "DRAW";
-                gameIsOver();
-              }
-            });
+            Player.score.textContent = `Player: ${Player.wins}`;
+            AI.score.textContent = `Enemy: ${AI.wins}`;
           }
-
-          Player.score.textContent = `Player: ${Player.wins}`;
-          AI.score.textContent = `Enemy: ${AI.wins}`;
-        }
-      });
+        });
     },
   };
 })();
