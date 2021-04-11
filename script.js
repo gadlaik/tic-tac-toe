@@ -1,4 +1,4 @@
-let Game = (function () {
+(function () {
   let Gameboard = {
     gameboard: document.querySelector(".gameboard"),
     fields: document.querySelectorAll(".field"),
@@ -83,7 +83,7 @@ let Game = (function () {
       Gameboard.fields[three].textContent == ox
     ) {
       AI.wins++;
-      winner.textContent = "ENEMY WON :(";
+      winner.textContent = "LMAO BOT WON XD";
       winner.style.color = "orangered";
       Gameboard.fields[one].style.color = "gold";
       Gameboard.fields[two].style.color = "gold";
@@ -172,22 +172,18 @@ let Game = (function () {
     });
   };
 
-  return {
-    ticTacToe: function () {
-      if (winCon("X", "O")) gameIsOver();
-      else if (Gameboard.gameover == false)
-        Gameboard.gameboard.addEventListener("click", (e) => {
-          let info = e;
-          if (Gameboard.gameover == true) info = null;
-          else if (Gameboard.gameover == false) {
-            gaming(info);
+  (() => {
+    if (winCon("X", "O")) gameIsOver();
+    else if (Gameboard.gameover == false)
+      Gameboard.gameboard.addEventListener("click", (e) => {
+        let info = e;
+        if (Gameboard.gameover == true) info = null;
+        else if (Gameboard.gameover == false) {
+          gaming(info);
 
-            Player.score.textContent = `Player: ${Player.wins}`;
-            AI.score.textContent = `Enemy: ${AI.wins}`;
-          }
-        });
-    },
-  };
+          Player.score.textContent = `Player: ${Player.wins}`;
+          AI.score.textContent = `AI: ${AI.wins}`;
+        }
+      });
+  })();
 })();
-
-Game.ticTacToe();
